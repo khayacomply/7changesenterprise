@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Stream: Dr. Justin Labala Mafusi Memorial | 7 Changes Enterprise</title>
+  <meta name="description" content="Live stream of the funeral service for Dr. Justin Labala Mafusi. Saturday, 11 April 2026 at 10:00 AM.">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="video.other">
+  <meta property="og:title" content="🔴 LIVE: Dr. Justin Labala Mafusi Memorial Service">
+  <meta property="og:description" content="Join us live for the funeral service. Saturday, 11 April 2026 at 10:00 AM">
+  <meta property="og:image" content="https://7changesenterprise.co.za/assets/dr-mafusi-live.jpg">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <style>
+    :root {
+      --gold-primary: #D4AF37;
+      --gold-light: #F4E8C1;
+      --gold-dark: #AA8C2C;
+      --black-deep: #0a0a0a;
+      --black-soft: #1a1a1a;
+      --white-cream: #F5F5DC;
+      --gray-muted: #888888;
+      --red-live: #CC0000;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--black-deep) 0%, var(--black-soft) 100%);
+      color: var(--white-cream);
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3, .serif { 
+      font-family: 'Playfair Display', serif; 
+      font-weight: 400; 
+    }
+    
+    .ornate {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 2px;
+    }
+    
+    /* Header */
+    .memorial-header {
+      background: linear-gradient(180deg, rgba(212,175,55,0.15) 0%, rgba(10,10,10,0.95) 100%);
+      border-bottom: 2px solid var(--gold-primary);
+      padding: 40px 20px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--red-live);
+      color: white;
+      padding: 8px 25px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      animation: pulse-live 2s infinite;
+      border: 2px solid #ff3333;
+    }
+    
+    @keyframes pulse-live {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(204, 0, 0, 0.7); }
+      50% { box-shadow: 0 0 0 15px rgba(204, 0, 0, 0); }
+    }
+    
+    .live-badge .dot {
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    
+    .memorial-header h1 {
+      font-size: 2.5rem;
+      color: var(--gold-primary);
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(212,175,55,0.3);
+    }
+    
+    .memorial-header .dates {
+      font-size: 1.3rem;
+      color: var(--gray-muted);
+      font-style: italic;
+      margin-bottom: 15px;
+    }
+    
+    .memorial-header .department {
+      display: inline-block;
+      background: rgba(212,175,55,0.1);
+      border: 1px solid var(--gold-dark);
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 0.9rem;
+      color: var(--gold-light);
+      margin-top: 10px;
+    }
+    
+    /* Live Stream Section */
+    .stream-section {
+      padding: 40px 20px;
+      background: radial-gradient(ellipse at center, rgba(212,175,55,0.08) 0%, transparent 70%);
+    }
+    
+    .stream-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      background: var(--black-soft);
+      border: 3px solid var(--gold-dark);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(212,175,55,0.3);
+      margin-bottom: 20px;
+    }
+    
+    .video-wrapper iframe,
+    .video-wrapper .placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .video-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--black-soft), #2a2a2a);
+      color: var(--gray-muted);
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .video-placeholder .icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+    
+    .video-placeholder h3 {
+      color: var(--gold-primary);
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+    }
+    
+    /* Countdown */
+    .countdown-box {
+      background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(10,10,10,0.9));
+      border: 1px solid var(--gold-dark);
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .countdown-title {
+      color: var(--gold-primary);
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .countdown-item {
+      background: linear-gradient(135deg, var(--black-soft), #2a2a2a);
+      border: 1px solid var(--gold-dark);
+      border-radius: 8px;
+      padding: 15px 20px;
+      min-width: 90px;
+    }
+    
+    .countdown-item .number {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--gold-primary);
+      display: block;
+      font-family: 'Cinzel', serif;
+    }
+    
+    .countdown-item .label {
+      font-size: 0.85rem;
+      color: var(--gray-muted);
+      text-transform: uppercase;
+    }
+    
+    /* Scripture */
+    .scripture-section {
+      background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(74,4,4,0.2));
+      border-top: 1px solid var(--gold-dark);
+      border-bottom: 1px solid var(--gold-dark);
+      padding: 40px 20px;
+      text-align: center;
+      margin: 30px 0;
+    }
+    
+    .scripture {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--gold-light);
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 2;
+    }
+    
+    .scripture-ref {
+      display: block;
+      margin-top: 15px;
+      font-size: 1.1rem;
+      color: var(--gold-primary);
+      font-weight: 500;
+    }
+    
+    /* Service Details */
+    .section {
+      padding: 50px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+      color: var(--gold-primary);
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    .section-title::after {
+      content: "◆";
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--gold-dark);
+      font-size: 1rem;
+    }
+    
+    .service-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
+    
+    .service-card {
+      background: linear-gradient(135deg, rgba(26,26,26,0.9), rgba(10,10,10,0.95));
+      border: 1px solid var(--gold-dark);
+      border-radius: 12px;
+      padding: 35px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(212,175,55,0.2);
+    }
+    
+    .service-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+    }
+    
+    .service-type {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      color: var(--gold-primary);
+      margin-bottom: 20px;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    
+    .service-detail {
+      margin: 15px 0;
+      padding: 12px;
+      background: rgba(212,175,55,0.05);
+      border-left: 3px solid var(--gold-dark);
+      border-radius: 0 5px 5px 0;
+    }
+    
+    .service-detail strong {
+      color: var(--gold-light);
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .service-detail span {
+      color: var(--white-cream);
+      font-size: 1.1rem;
+    }
+    
+    /* YouTube Link */
+    .youtube-link {
+      text-align: center;
+      padding: 20px;
+      background: rgba(204,0,0,0.1);
+      border: 1px solid var(--red-live);
+      border-radius: 10px;
+      margin: 30px 0;
+    }
+    
+    .youtube-link a {
+      color: var(--gold-primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+    
+    .youtube-link a:hover {
+      color: var(--gold-light);
+    }
+    
+    /* Map */
+    .map-section {
+      background: rgba(10,10,10,0.8);
+    }
+    
+    .venue-map {
+      height: 350px;
+      width: 100%;
+      border-radius: 10px;
+      border: 2px solid var(--gold-dark);
+      margin-top: 20px;
+      background: var(--black-soft);
+    }
+    
+    /* Footer */
+    .memorial-footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--gold-dark);
+      color: var(--gray-muted);
+      font-size: 0.95rem;
+      background: var(--black-deep);
+    }
+    
+    .memorial-footer .rest {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--gold-primary);
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+    
+    .memorial-footer .prepared {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(212,175,55,0.3);
+      font-size: 0.85rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .memorial-header h1 { font-size: 1.8rem; }
+      .memorial-header .dates { font-size: 1rem; }
+      .countdown-item { min-width: 80px; padding: 12px 15px; }
+      .countdown-item .number { font-size: 1.6rem; }
+      .section { padding: 30px 15px; }
+      .service-card { padding: 25px; }
+      .scripture { font-size: 1.1rem; }
+      .video-wrapper { border-radius: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="memorial-header">
+    <div class="live-badge" id="liveBadge" style="display: none;">
+      <span class="dot"></span>
+      <span>🔴 LIVE NOW</span>
+    </div>
+    <h1 class="ornate">In Loving Memory Of</h1>
+    <h2 style="font-size: 2.2rem; color: var(--white-cream); margin: 15px 0;">Dr. Justin Labala Mafusi</h2>
+    <p class="dates">Born: 04 May 1975 &nbsp;•&nbsp; Called Home: 01 April 2026</p>
+    <div class="department">Department of Health • Northern Cape</div>
+  </header>
+
+  <!-- Live Stream Section -->
+  <section class="stream-section">
+    <div class="stream-container">
+      <h2 class="ornate" style="color: var(--gold-primary); text-align: center; margin-bottom: 20px; font-size: 1.8rem;">🎥 Live Stream Service</h2>
+      
+      <div class="video-wrapper" id="videoWrapper">
+        <!-- YouTube Live Embed -->
+        <iframe 
+          id="youtubePlayer"
+          src="https://www.youtube.com/embed/live_stream?channel=UC_YOUR_CHANNEL_ID"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          style="display: none;">
+        </iframe>
+        
+        <!-- Placeholder Before Stream -->
+        <div class="video-placeholder" id="videoPlaceholder">
+          <div class="icon">🎥</div>
+          <h3>Live Stream Starting Soon</h3>
+          <p>The funeral service will begin at 10:00 AM on Saturday, 11 April 2026</p>
+          <p style="margin-top: 15px; font-size: 0.9rem;">Refresh the page closer to start time</p>
+        </div>
+      </div>
+
+      <!-- Countdown -->
+      <div class="countdown-box" id="countdownBox">
+        <div class="countdown-title ornate">Service Starts In</div>
+        <div class="countdown" id="countdown">
+          <div class="countdown-item">
+            <span class="number" id="days">00</span>
+            <span class="label">Days</span>
+          </div>
+          <div class="countdown-item">
+            <span class="number" id="hours">00</span>
+            <span class="label">Hours</span>
+          </div>
+          <div class="countdown-item">
+            <span class="number" id="minutes">00</span>
+            <span class="label">Minutes</span>
+          </div>
+          <div class="countdown-item">
+            <span class="number" id="seconds">00</span>
+            <span class="label">Seconds</span>
+          </div>
+        </div>
+        <p style="color: var(--gray-muted); margin-top: 15px;">
+          Saturday, 11 April 2026 at 10:00 AM SAST<br>
+          <small>St Patrick's CBC School Hall, Kimberley</small>
+        </p>
+      </div>
+
+      <!-- YouTube Channel Link -->
+      <div class="youtube-link">
+        <a href="https://youtube.com/@7changesenterprise" target="_blank">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          Watch on 7 Changes Enterprise YouTube Channel
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripture -->
+  <section class="scripture-section">
+    <div class="scripture">
+      "If we live, we live for the Lord; and if we die, we die for the Lord.<br>
+      So, whether we live or die, we belong to the Lord."
+      <span class="scripture-ref">— Romans 14:8</span>
+    </div>
+  </section>
+
+  <!-- Service Details -->
+  <section class="section">
+    <h2 class="section-title ornate">Service Arrangements</h2>
+    <div class="service-cards">
+      <!-- Memorial Service -->
+      <div class="service-card">
+        <div class="service-type">Memorial Service</div>
+        <div class="service-detail">
+          <strong>Venue</strong>
+          <span>RMSH Chapel, Kimberley</span>
+        </div>
+        <div class="service-detail">
+          <strong>Date</strong>
+          <span>Friday, 10 April 2026</span>
+        </div>
+        <div class="service-detail">
+          <strong>Time</strong>
+          <span>To be announced</span>
+        </div>
+      </div>
+
+      <!-- Funeral Service -->
+      <div class="service-card">
+        <div class="service-type">Funeral Service</div>
+        <div class="service-detail">
+          <strong>Venue</strong>
+          <span>St Patrick's CBC School Hall<br><small style="color: var(--gray-muted); font-size: 0.85rem;">Kimberley</small></span>
+        </div>
+        <div class="service-detail">
+          <strong>Date</strong>
+          <span>Saturday, 11 April 2026</span>
+        </div>
+        <div class="service-detail">
+          <strong>Time</strong>
+          <span>10:00 AM</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Venues Map -->
+  <section class="section map-section">
+    <h2 class="section-title ornate">Service Locations</h2>
+    <p style="text-align: center; color: var(--gray-muted); margin-bottom: 20px;">
+      Memorial and funeral service venues in Kimberley
+    </p>
+    <div id="venueMap" class="venue-map"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="memorial-footer">
+    <p class="rest">Rest in Eternal Peace, Dr. Mafusi</p>
+    <p style="color: var(--gray-muted); margin-bottom: 10px;">
+      Your dedication to healthcare and service to the Northern Cape community<br>
+      will forever be remembered and cherished.
+    </p>
+    <p style="font-size: 1.1rem; color: var(--gold-primary); margin: 20px 0;">
+      "Well done, good and faithful servant" — Matthew 25:21
+    </p>
+    <div class="prepared">
+      <p style="color: var(--gray-muted); font-size: 0.85rem;">
+        Memorial page & live stream hosted by<br>
+        <strong style="color: var(--gold-primary);">7 Changes Enterprise</strong><br>
+        <span style="font-size: 0.8rem;">"Renewed Perfection"</span>
+      </p>
+      <p style="margin-top: 15px; font-size: 0.8rem;">
+        <a href="https://7changesenterprise.co.za" style="color: var(--gold-dark);">www.7changesenterprise.co.za</a> | 
+        <a href="tel:+27761135095" style="color: var(--gold-dark);">076 113 5095</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // 🎥 YOUTUBE LIVE STREAM CONFIGURATION
+    const YOUTUBE_CONFIG = {
+      channelId: 'UC_YOUR_CHANNEL_ID_HERE', // ← REPLACE WITH YOUR CHANNEL ID
+      streamStartTime: new Date('2026-04-11T10:00:00+02:00').getTime()
+    };
+
+    // 🔥 COUNTDOWN TIMER
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = YOUTUBE_CONFIG.streamStartTime - now;
+
+      if (distance < 0) {
+        document.getElementById('countdownBox').style.display = 'none';
+        document.getElementById('liveBadge').style.display = 'inline-flex';
+        showLiveStream();
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('days').textContent = String(days).padStart(2, '0');
+      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    function showLiveStream() {
+      document.getElementById('videoPlaceholder').style.display = 'none';
+      document.getElementById('youtubePlayer').style.display = 'block';
+      document.getElementById('videoWrapper').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // 🗺️ MAP
+    document.addEventListener('DOMContentLoaded', function() {
+      const kimberley = [-28.7282, 24.7499];
+      
+      const map = L.map('venueMap').setView(kimberley, 13);
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.marker([-28.735, 24.755]).addTo(map)
+        .bindPopup('<b>Memorial Service</b><br>RMSH Chapel<br>Friday, 10 April 2026');
+
+      L.marker([-28.725, 24.745]).addTo(map)
+        .bindPopup('<b>Funeral Service</b><br>St Patrick\'s CBC School Hall<br>Saturday, 11 April 2026 at 10:00');
+    });
+  </script>
+</body>
+</html>
